@@ -5,28 +5,38 @@ using UnityEngine;
 public class PlayAlarm : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSourse;
+    [SerializeField] private float _volumeTime;
 
-    private Coroutine _coroutine;
+    private const float _updateTime = 0.1f;
+    private float _volumeRunningTime;
+
+    private Coroutine _increaseVolumeSound;
     
     private void OnTriggerEnter2D(Collider2D collision)
     {
        _audioSourse.Play();
-       _coroutine = StartCoroutine(PlaySong(1));
+       _increaseVolumeSound = StartCoroutine(PlaySong(1));
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-      _coroutine = StartCoroutine(PlaySong(0));
+      _increaseVolumeSound = StartCoroutine(PlaySong(0));
     }
 
     private IEnumerator PlaySong(int value)
     {
-        if (_coroutine != null)
-            StopCoroutine(_coroutine);
-        var time = new WaitForSeconds(0.05f);
+        var time = new WaitForSeconds(_updateTime);
+
+        if (_increaseVolumeSound != null)
+        {
+            StopCoroutine(_increaseVolumeSound);
+            _volumeRunningTime = 0;
+        }
+
         while(_audioSourse.volume != value) 
         { 
-            _audioSourse.volume = Mathf.MoveTowards(_audioSourse.volume, value, 0.005f);
+            _volumeRunningTime += Time.deltaTime;
+            _audioSourse.volume = Mathf.Lerp(_audioSourse.volume, value,_volumeRunningTime/_volumeTime);
             yield return time;
         }
     }

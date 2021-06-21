@@ -524,6 +524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSourse: {fileID: 648159374}
+  _volumeTime: 10
 --- !u!1 &736634025
 GameObject:
   m_ObjectHideFlags: 0
